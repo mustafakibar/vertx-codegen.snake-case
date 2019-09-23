@@ -42,7 +42,8 @@ kapt {
 
 sourceSets {
     getByName("main").resources.srcDirs("conf", "src/main/resources")
-    getByName("main").java.srcDirs("src/main/kotlin", "src/main/java", "build/generated")
+    // I don't known why the generated  code is hidden before remove build/generated,
+    getByName("main").java.srcDirs("src/main/kotlin", "src/main/java")
     getByName("test").java.srcDirs("src/test/kotlin", "src/test/java")
 }
 
