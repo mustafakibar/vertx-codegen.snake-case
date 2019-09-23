@@ -30,23 +30,14 @@ idea {
     }
 }
 
-tasks {
-    register<JavaCompile>("annotationProcessing") {
-        source("src/main/kotlin")
-        classpath = configurations["annotationProcessor"] + configurations["compile"] + configurations["compileOnly"]
-        destinationDir = project.file("build/generated")
-        options.annotationProcessorPath = classpath
-        options.annotationProcessorGeneratedSourcesDirectory = file("build/generated")
-
-        options.compilerArgs = listOf(
-            "-proc:only",
-            "-processor", "io.vertx.codegen.CodeGenProcessor",
-            "-Acodegen.output=${project.projectDir}/src/main/",
-            "-Acodegen.generators=sc_data_object_converters"
-        )
+kapt {
+    generateStubs = true
+    annotationProcessor("io.vertx.codegen.CodeGenProcessor")
+    arguments {
+        arg("codegen.output", "${project.projectDir}/src/main/generated")
+        arg("codegen.generators", "sc_data_object_converters")
     }
 
-    getByName("compileJava").dependsOn("annotationProcessing")
 }
 
 sourceSets {
@@ -72,5 +63,7 @@ dependencies {
     compile(Config.Libs.vertx_service_discovery)
     compile(Config.Libs.vertx_hazelcast)
     compileOnly(Config.Libs.vertx_codegen)
-    kapt(Config.Libs.vertx_codegen_kapt)
+    compileOnly(project(":snake-case-gen"))
+    kapt(project(":snake-case-gen"))
+    kapt(Config.Libs.vertx_codegen)
 }
